@@ -2,6 +2,7 @@
 @using AiChef.Shared
 @using Microsoft.AspNetCore.Components.Forms;
 @using System.ComponentModel.DataAnnotations;
+@inject NavigationManager navigationManager
 
 
 <PageTitle>AI Chef - Create Meal</PageTitle>
@@ -57,7 +58,7 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        <button class="btn btn-success rounded">Generate</button>
+                        <button class="btn btn-success rounded" @onclick="HandleSubmit">Generate</button>
                     </div>
                 </div>
             </EditForm>
@@ -103,6 +104,11 @@
     private void RemoveIngredient(Guid id)
     {
         ingredients.Remove(ingredients.First(x => x.Id == id));
+    }
+
+    private void HandleSubmit()
+    {
+        navigationManager.NavigateTo("/mealIdeas");
     }
 
 }
