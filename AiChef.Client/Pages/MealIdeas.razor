@@ -1,5 +1,8 @@
 ﻿@page "/mealIdeas"
 @using AiChef.Shared
+@using System.Text.Json
+@inject NavigationManager navigationManager
+@inject HttpClient http;
 
 @if (loaded == true)
 {
@@ -30,5 +33,45 @@ else
 @code {
     private List<Idea> ideas = new List<Idea>();
     private bool loaded = false;
+
+    [CascadingParameter]
+    private RecipeState? rState { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (rState is null)
+        {
+            navigationManager.NavigateTo("/", forceLoad: true);
+            return;
+        }
+
+        if (rState.Ideas.Count < 1)
+        {
+            GetIdeas();
+        }
+        else
+        {
+            loaded = true;
+            ideas = rState.Ideas;
+            StateHasChanged();
+        }
+
+
+    }
+
+
+    private async void GetIdeas()
+    {
+        string baseUri = "Recipe/GetRecipeIdeas";
+        loaded = false;
+
+        RecipeParms recipeParms = new RecipeParms()
+            {
+                MealTime = rState.MealTime
+            };
+
+
+        //call web api controller
+    }
 
 }
