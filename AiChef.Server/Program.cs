@@ -1,6 +1,10 @@
+using AiChef.Server.Services;
+using AiChef.Server.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<IOpenAIAPI, OpenAIService>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
