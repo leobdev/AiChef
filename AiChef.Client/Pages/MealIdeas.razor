@@ -15,8 +15,8 @@
                 <button class="list-group-item list-group-item-action list-group-item-success p-2">
                     <div class="d-flex w-100 justify-content-sm-between">
                         <h2 class="mb-1 fw-bold">@idea.title</h2>
-                        <p class="mb-1">@idea.description</p>
                     </div>
+                    <p class="mb-1">@idea.description</p>
                 </button>
             }
         </div>
@@ -35,7 +35,14 @@ else
     private bool loaded = false;
 
     [CascadingParameter]
-    private RecipeState? rState { get; set; }
+    private RecipeState rState { get; set; }
+
+    private readonly JsonSerializerOptions _jsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        };
 
     protected override void OnInitialized()
     {
@@ -67,11 +74,28 @@ else
 
         RecipeParms recipeParms = new RecipeParms()
             {
-                MealTime = rState.MealTime
+                MealTime = rState.MealTime,
+                Ingredients = rState.Ingredients
             };
 
 
         //call web api controller
+
+        try
+        {
+            HttpResponseMessage response = await http.PostAsJsonAsync(baseUri, recipeParms, _jsonOptions);
+            response.EnsureSuccessStatusCode();
+            ideas = (await response.Content.ReadFromJsonAsync<List<Idea>>())!;
+            rState.Ideas = ideas;
+            loaded = true;
+            StateHasChanged();
+        }
+        catch (Exception)
+        {
+
+            Console.WriteLine("Error could not fetch recipe ideas");
+        }
+
     }
 
 }
