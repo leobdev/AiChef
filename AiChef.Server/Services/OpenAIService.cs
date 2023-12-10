@@ -11,7 +11,7 @@ namespace AiChef.Server.Services
     public class OpenAIService : IOpenAIAPI
     {
         private readonly IConfiguration _configuration;
-        private static readonly string _baseUrl = "http://api.openai.com/v1/";
+        private static readonly string _baseUrl = "https://api.openai.com/v1/";
         private static readonly HttpClient _httpClient = new HttpClient();
         private readonly JsonSerializerOptions _jsonOptions;
 
@@ -71,7 +71,7 @@ namespace AiChef.Server.Services
             var apiKey = _configuration["OpenAi:OpenAiKey"] ?? Environment.GetEnvironmentVariable("OpenAiKey");
 
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            _httpClient.DefaultRequestHeaders.Authorization = new("Bearer", apiKey);
+            _httpClient.DefaultRequestHeaders.Authorization = new("Bearer",apiKey);
 
             _jsonOptions = new()
             {
@@ -116,10 +116,10 @@ namespace AiChef.Server.Services
 
             ChatRequest request = new ChatRequest()
             {
-                Model = "gpt-3.5-turbo-0613",
+                Model = "gpt-3.5-turbo-1106",
                 Messages = new[] { systemMessage, userMessage },
                 Functions = new[] { _ideaFunction },
-                FunctionCall = new[] { _ideaFunction.Name }
+                FunctionCall = new {Name = _ideaFunction.Name }
             };
 
 
