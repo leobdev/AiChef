@@ -16,6 +16,8 @@ namespace AiChef.Server.Services
         private readonly JsonSerializerOptions _jsonOptions;
 
         // build the function object so the AI will return JSON formatted object
+
+        // build the function object so the AI will return JSON formatted object
         private static ChatFunction.Parameter _recipeIdeaParameter = new()
         {
             // describes one Idea
@@ -62,6 +64,52 @@ namespace AiChef.Server.Services
                         Items = _recipeIdeaParameter
                     }
                 }
+            }
+        };
+
+        private static ChatFunction.Parameter _recipeParameter = new()
+        {
+            Type = "object",
+            Description = "The recipe to display",
+            Required = new[] { "title", "ingredients", "instructions", "summary" },
+            Properties = new
+            {
+                Title = new
+                {
+                    Type = "string",
+                    Description = "The title of the recipe to display",
+                },
+                Ingredients = new
+                {
+                    Type = "array",
+                    Description = "An array of all the ingredients mentioned in the recipe instructions",
+                    Items = new { Type = "string" }
+                },
+                Instructions = new
+                {
+                    Type = "array",
+                    Description = "An array of each step for cooking this recipe",
+                    Items = new { Type = "string" }
+                },
+                Summary = new
+                {
+                    Type = "string",
+                    Description = "A summary description of what this recipe creates",
+                },
+            },
+        };
+
+        private static ChatFunction _recipeFunction = new()
+        {
+            Name = "DisplayRecipe",
+            Description = "Displays the recipe from the parameter to the user",
+            Parameters = new
+            {
+                Type = "object",
+                Properties = new
+                {
+                    Data = _recipeParameter
+                },
             }
         };
 
@@ -155,6 +203,11 @@ namespace AiChef.Server.Services
             return ideasResult?.Data ?? new List<Idea>();
 
 
+        }
+
+        public Task<Recipe>? CreateRecipe(string title, List<string> ingredients)
+        {
+            throw new NotImplementedException();
         }
     }
 }
