@@ -1,15 +1,54 @@
-﻿@page "/mealRecipe"
+﻿@page "/mealRecipe/{Index:int}"
 @using AiChef.Shared;
 @using System.Text.Json;
+@using System.Web;
 @inject HttpClient Http;
 @inject NavigationManager Navigation;
 
+@if (loaded == true)
+{
 
-<div class="container">
+    <div class="container mt-5 h-100">
 
-    <h3>Meal Recipe</h3>
+        <div class="d-flex flex-column flex-lg-row justify-content-start">
+            <div class="text-center text-lg-start">
+                <img src="@recipeImageUrl" class="rounded-3 recipeImage" />
+            </div>
+            <div class="flex-grow-1 px-3">
+                <h1 class="fw-bold">@recipe.title</h1>
+                <p>@recipe.summary</p>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2">
+            <div class="col mt-3">
+                <h2>Ingredients</h2>
+                <ul>
+                    @foreach (var item in recipe.ingredients)
+                    {
+                        <li>@item</li>                  
+                    }
+                </ul>
+            </div>
+            <div class="col">
+                <h2>Instructions</h2>
+                <ul>
+                    @foreach (var item in recipe.instructions)
+                    {
+                        <li>@item</li>
+                    }
+                </ul>
+            </div>
+        </div>
 
-</div>
+    </div>
+}
+else
+{
+    <div class="container">
+        <p>Loading...</p>
+    </div>
+
+}
 
 
 
@@ -17,5 +56,60 @@
 
 
 @code {
+
+    [CascadingParameter]
+    private RecipeState? rState { get; set; }
+
+    [Parameter]
+    public int Index { get; set; }
+    bool loaded = false;
+    private string title;
+    private string recipeImageUrl = string.Empty;
+    private Recipe recipe;
+
+    protected override void OnInitialized()
+    {
+        loaded = false;
+        GetRecipe();
+    }
+
+    private async void GetRecipe()
+    {
+        string baseurl = "Recipe/GetRecipe";
+
+        try
+        {
+            title = rState.Ideas.FirstOrDefault(i => i.index == Index).title;
+
+            RecipeParms recipeParms = new RecipeParms()
+                {
+                    MealTime = rState.MealTime,
+                    Ingredients = rState.Ingredients,
+                    SelectedIdea = title
+                };
+
+            //get the recipe image
+            HttpResponseMessage responseImage = await Http.GetAsync($"Recipe/GetRecipeImage?title={HttpUtility.UrlEncode(title)}");
+            var recipeImage = await responseImage.Content.ReadFromJsonAsync<RecipeImage>();
+            recipeImageUrl = recipeImage!.data[0].url;
+
+            //get the recipe
+            HttpResponseMessage responseRecipe = await Http.PostAsJsonAsync(baseurl, recipeParms);
+
+            responseRecipe.EnsureSuccessStatusCode();
+
+            recipe = (await responseRecipe?.Content.ReadFromJsonAsync<Recipe>())!;
+
+            loaded = true;
+
+            StateHasChanged();
+
+        }
+        catch (Exception ex)
+        {
+
+            Console.WriteLine("Error: Could not generate recipe!", ex);
+        }
+    }
 
 }
