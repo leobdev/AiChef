@@ -16,6 +16,8 @@ namespace AiChef.Server.Services
         private readonly JsonSerializerOptions _jsonOptions;
 
         // build the function object so the AI will return JSON formatted object
+
+        // build the function object so the AI will return JSON formatted object
         private static ChatFunction.Parameter _recipeIdeaParameter = new()
         {
             // describes one Idea
