@@ -51,7 +51,7 @@ namespace AiChef.Server.Controllers
                 return BadRequest();
             }
 
-            var recipe = await _openAIService?.CreateRecipe(title, ingredients);
+            Recipe? recipe = await _openAIService?.CreateRecipe(title, ingredients);
 
             return recipe;
 

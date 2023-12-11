@@ -65,6 +65,54 @@ namespace AiChef.Server.Services
             }
         };
 
+
+        private static ChatFunction.Parameter _recipeParameter = new()
+        {
+            Type = "object",
+            Description = "The recipe to display",
+            Required = new[] { "title", "ingredients", "instructions", "summary" },
+            Properties = new
+            {
+                Title = new
+                {
+                    Type = "string",
+                    Description = "The title of the recipe to display",
+                },
+                Ingredients = new
+                {
+                    Type = "array",
+                    Description = "An array of all the ingredients mentioned in the recipe instructions",
+                    Items = new { Type = "string" }
+                },
+                Instructions = new
+                {
+                    Type = "array",
+                    Description = "An array of each step for cooking this recipe",
+                    Items = new { Type = "string" }
+                },
+                Summary = new
+                {
+                    Type = "string",
+                    Description = "A summary description of what this recipe creates",
+                },
+            },
+        };
+
+        private static ChatFunction _recipeFunction = new()
+        {
+            Name = "DisplayRecipe",
+            Description = "Displays the recipe from the parameter to the user",
+            Parameters = new
+            {
+                Type = "object",
+                Properties = new
+                {
+                    Data = _recipeParameter
+                },
+            }
+        };
+
+
         public OpenAIService(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -119,7 +167,7 @@ namespace AiChef.Server.Services
                 Model = "gpt-3.5-turbo-1106",
                 Messages = new[] { systemMessage, userMessage },
                 Functions = new[] { _ideaFunction },
-                FunctionCall = new {Name = _ideaFunction.Name }
+                FunctionCall = new { Name = _ideaFunction.Name }
             };
 
 
@@ -153,6 +201,7 @@ namespace AiChef.Server.Services
 
 
             return ideasResult?.Data ?? new List<Idea>();
+        }
 
 
         public async Task<Recipe>? CreateRecipe(string title, List<string> ingredients)
