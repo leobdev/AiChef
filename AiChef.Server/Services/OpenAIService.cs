@@ -256,5 +256,33 @@ namespace AiChef.Server.Services
 
             return recipe?.Data;
         }
+
+        public async Task<RecipeImage>? CreateRecipeImage(string recipeTitle)
+        {
+            string url = $"{_baseUrl}images/generations";
+            string userPrompt = $"Create a restaurant product shot for {recipeTitle}";
+
+            ImageGenerationRequest request = new()
+            {
+                Prompt = userPrompt
+            };
+
+            HttpResponseMessage httpResponse = await _httpClient.PostAsJsonAsync(url, request, _jsonOptions);
+
+            RecipeImage? recipeImage = new();
+
+            try
+            {
+                recipeImage = await httpResponse.Content.ReadFromJsonAsync<RecipeImage>();
+            }
+            catch 
+            {
+
+                Console.WriteLine("Error: Recipe image could not be retrieved");
+            }
+
+            return recipeImage;
+             
+        }
     }
 }
