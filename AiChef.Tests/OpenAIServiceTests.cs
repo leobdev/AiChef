@@ -26,7 +26,8 @@ namespace AiChef.Tests
                  "bread",
                  "eggs",
                  "bacon",
-                 "milk"
+                 "milk",
+                 "sour cream"
 
             };
 
