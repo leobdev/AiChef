@@ -32,6 +32,12 @@ namespace AiChef.Server.Controllers
 
             var ideas = await _openAIService.CreateRecipeIdeas(mealtime, ingredients);
 
+            if(ideas.Count == 0)
+            {
+              
+                ideas.Add( new Idea { description = "Cound't fetch idea from web service", index = 1, title = "Error" });
+            }
+
             return ideas;
             //return SampleData.RecipeIdeas;
         }
