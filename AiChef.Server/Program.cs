@@ -3,6 +3,14 @@ using AiChef.Server.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//Adding CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", b => b.AllowAnyOrigin()
+                                          .AllowAnyMethod()
+                                          .AllowAnyHeader());                                                       
+});
+
 // Add services to the container.
 builder.Services.AddScoped<IOpenAIAPI, OpenAIService>();
 
@@ -15,6 +23,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseCors("CorsPolicy");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
