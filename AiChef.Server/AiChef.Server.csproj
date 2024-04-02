@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
     <UserSecretsId>a38596d6-be0d-44a9-ad1f-0806c145931e</UserSecretsId>
-    <!--<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>-->
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +19,12 @@
   <ItemGroup>
     <ProjectReference Include="..\AiChef.Client\AiChef.Client.csproj" />
     <ProjectReference Include="..\AiChef.Shared\AiChef.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ContainerEnvironmentVariable Include="ASPNETCORE_HTTPS_PORTS">
+      <Value>8081</Value>
+    </ContainerEnvironmentVariable>
   </ItemGroup>
 
 </Project>
